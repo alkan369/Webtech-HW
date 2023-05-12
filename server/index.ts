@@ -1,11 +1,17 @@
-// import { config } from 'dotenv';
-import dotenv from 'dotenv';
-import express from 'express';
+// import dotenv from 'dotenv';
 
-// config();
+const dotenv = require('dotenv');
+const express = require('express');
+
+import { Application, json } from "express";
+import { connect as connectAPI } from "./api/connect";
+
 dotenv.config();
 
-const app = express();
+const app: Application = express();
+app.use(json);
+
+connectAPI(app, '/api');
 
 app.get("/", (req, res) => {
     res.send("Hello World!");
@@ -13,6 +19,11 @@ app.get("/", (req, res) => {
   
 const PORT = process.env.PORT || 3001
 
-app.listen(PORT, () => {
-    console.log(`Server started on port ${PORT}`);
-});
+try {
+    app.listen(PORT, () => {
+        console.log(`Server started on port ${PORT}`);
+    });
+}
+catch(error){
+    console.log("Failed to start the server with error : ${error}");
+}

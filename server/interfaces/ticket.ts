@@ -1,20 +1,16 @@
 import { Request } from "express"
 
-export enum TicketStatus{
-    'open',
-    'in progress',
-    'resolved'
-}
+export const validTicketStatus = ['open', 'in progress', 'resolved'];
 
 export interface Ticket{
-    id: number,
+    id: string,
     title: string,
-    projectId: number,
-    assignedTo: number,
+    projectId: string,
+    assignedTo: string,
     description: string,
-    createDate: string, // date ?
-    updateDate: string, // date ?
-    status: TicketStatus
+    createDate: Date,
+    updateDate: Date,
+    status: string
 }
 
 export interface TicketRequest extends Request{
