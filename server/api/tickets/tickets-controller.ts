@@ -54,7 +54,7 @@ ticketsController.get('/view_by_status/:status', async (req, res) =>{
 
 ticketsController.post('/create', async (req: TicketRequest, res) => {
     const newTicketId: string = String(tickets.length + 1);
-    const newTicketTitle: string = req.body.title; // check if has title
+    const newTicketTitle: string = req.body.title;
     const newTicketProjectId: string = req.body.projectId; // is it ok not to have project ID
     const newTicketAssignedTo: string = req.body.assignedTo;  // is it ok not to have assigned to ID
     const newTicketDescription: string = req.body.description;
@@ -92,8 +92,6 @@ ticketsController.put('/edit/:id', async (req, res) => {
     if(!ticketID || ticketID.length === 0){
         return res.status(400).json({'message': 'No Entered Ticket Id'});
     }
-    // take the ticket with ID ticketID from the DB
-    // create a new object and then change one by one every field that needs to be changed
     const searchedTicketIndex = tickets.findIndex(ticket => ticket.id === ticketID);
     if(searchedTicketIndex === -1){
         return res.status(400).json({'message': 'No Ticket Found With Such Id'});
@@ -132,7 +130,6 @@ ticketsController.put('/edit/:id', async (req, res) => {
 });
 
 ticketsController.delete('/delete/:id', async (req, res) => {
-    // if ticket with such id exists -> delete -> 200 status
     const searchedTicketId: string = req.params.id;
     if(!searchedTicketId || searchedTicketId.length === 0){
         return res.status(400).json({'message': 'No Ticket Id Input'});

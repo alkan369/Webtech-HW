@@ -2,7 +2,6 @@
 
 import dotenv from 'dotenv';
 import express from 'express';
-import cors from 'cors';
 
 import { Application, json } from "express";
 import { connect as connectAPI } from "./api/connect";
@@ -12,7 +11,6 @@ dotenv.config();
 const app: Application = express();
 
 app.use(json());
-// app.use(cors());
 
 connectAPI(app, '/api');
 
