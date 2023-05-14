@@ -88,14 +88,47 @@ ticketsController.post('/create', async (req: TicketRequest, res) => {
 });
 
 ticketsController.put('/edit/:id', async (req, res) => {
-    // if id is empty -> status 400
     const ticketID = req.params.id;
     if(!ticketID || ticketID.length === 0){
         return res.status(400).json({'message': 'No Entered Ticket Id'});
     }
+    // take the ticket with ID ticketID from the DB
+    // create a new object and then change one by one every field that needs to be changed
+    const searchedTicketIndex = tickets.findIndex(ticket => ticket.id === ticketID);
+    if(searchedTicketIndex === -1){
+        return res.status(400).json({'message': 'No Ticket Found With Such Id'});
+    }
+    const ticketToBeEdited: Ticket = await tickets[searchedTicketIndex];
+    const newTitle: string = req.body.title;
+    const newProjectId: string = req.body.projectId;
+    const newAssignedTo: string = req.body.assignedTo;
+    const newDescription: string = req.body.description;
+    const newStatus: string = req.body.status;
+    if(newTitle){
+        if(newTitle.length === 0){
+            return res.status(400).json({'message': 'Ticket Title Cannot Be Empty Title'});
+        }
+        ticketToBeEdited.title = newTitle;
+    }
+    if(newProjectId){
+        ticketToBeEdited.projectId = newProjectId;
+    }
+    if(newAssignedTo){
+        ticketToBeEdited.assignedTo = newAssignedTo;
+    }
+    if(newDescription){
+        ticketToBeEdited.description = newDescription;
+    }
+    if(newStatus && newStatus.length !== 0){
 
-    const updateDate = new Date();
-    // find ticket with such id -> update
+        if(await validTicketStatus.indexOf(newStatus) === -1){
+            return res.status(400).json({'message' : 'Invalid Ticket Status Input'});
+        }
+        ticketToBeEdited.status = newStatus;
+    }
+    ticketToBeEdited.updateDate = new Date();
+    tickets[searchedTicketIndex] = ticketToBeEdited;
+    return res.status(200).json(ticketToBeEdited);
 });
 
 ticketsController.delete('/delete/:id', async (req, res) => {
@@ -111,7 +144,7 @@ ticketsController.delete('/delete/:id', async (req, res) => {
     else {
         const removedTicket = await tickets[searchedTicket];
         try {
-            await tickets.slice(searchedTicket, 1);
+            await tickets.splice(searchedTicket, 1);
             return res.status(200).json(removedTicket);
         }
         catch (error) {
