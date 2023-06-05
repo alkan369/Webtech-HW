@@ -33,8 +33,7 @@ ticketsController.get('/view_by_asignee/:assignedTo', async (req, res) =>{
     const searchedAsignee: string = req.params.assignedTo;
     if(!searchedAsignee || searchedAsignee.length === 0){
         return res.status(400).json({'message': 'No Ticket Asignee Input'});
-    }
-    const filteredTickets = await tickets.filter(tickets => tickets.assignedTo === searchedAsignee);
+    }    const filteredTickets = await tickets.filter(tickets => tickets.assignedTo === searchedAsignee);
     return res.status(200).json(filteredTickets);
 })
 
@@ -55,9 +54,9 @@ ticketsController.get('/view_by_status/:status', async (req, res) =>{
 ticketsController.post('/create', async (req: TicketRequest, res) => {
     const newTicketId: string = String(tickets.length + 1);
     const newTicketTitle: string = req.body.title;
-    const newTicketProjectId: string = req.body.projectId; // is it ok not to have project ID
-    const newTicketAssignedTo: string = req.body.assignedTo;  // is it ok not to have assigned to ID
-    const newTicketDescription: string = req.body.description;
+    const newTicketProjectId: string = req.body.projectId ? req.body.projectId : ""; // is it ok not to have project ID
+    const newTicketAssignedTo: string = req.body.assignedTo ? req.body.projectId : "";  // is it ok not to have assigned to ID
+    const newTicketDescription: string = req.body.description ? req.body.description : "";
     const newTicketCreateDate: Date = new Date();
     const newTicketUpdateDate: Date = new Date();
     if (!newTicketTitle || newTicketTitle.length === 0) {
@@ -148,7 +147,7 @@ ticketsController.delete('/delete/:id', async (req, res) => {
             return res.status(500).json
                 ({
                     'message': 'Error Ocurred In Deleting The Ticket',
-                    'error': error
+                    error
                 });
         }
     }
