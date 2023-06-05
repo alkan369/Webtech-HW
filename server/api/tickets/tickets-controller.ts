@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { Ticket, validTicketStatus, TicketRequest } from "../../interfaces/ticket";
+import { Ticket, validTicketStatus, TicketRequest, validPriorities } from "../../interfaces/ticket";
 import { tickets } from "../pseudoDB";
 
 const ticketsController = Router();
@@ -33,7 +33,8 @@ ticketsController.get('/view_by_asignee/:assignedTo', async (req, res) =>{
     const searchedAsignee: string = req.params.assignedTo;
     if(!searchedAsignee || searchedAsignee.length === 0){
         return res.status(400).json({'message': 'No Ticket Asignee Input'});
-    }    const filteredTickets = await tickets.filter(tickets => tickets.assignedTo === searchedAsignee);
+    }    
+    const filteredTickets = await tickets.filter(tickets => tickets.assignedTo === searchedAsignee);
     return res.status(200).json(filteredTickets);
 })
 
@@ -54,13 +55,21 @@ ticketsController.get('/view_by_status/:status', async (req, res) =>{
 ticketsController.post('/create', async (req: TicketRequest, res) => {
     const newTicketId: string = String(tickets.length + 1);
     const newTicketTitle: string = req.body.title;
-    const newTicketProjectId: string = req.body.projectId ? req.body.projectId : ""; // is it ok not to have project ID
-    const newTicketAssignedTo: string = req.body.assignedTo ? req.body.projectId : "";  // is it ok not to have assigned to ID
-    const newTicketDescription: string = req.body.description ? req.body.description : "";
+    const newTicketProjectId: string = req.body.projectId ? req.body.projectId : ''; // is it ok not to have project ID
+    const newTicketAssignedTo: string = req.body.assignedTo ? req.body.projectId : '';  // is it ok not to have assigned to ID
+    const newTicketDescription: string = req.body.description ? req.body.description : '';
     const newTicketCreateDate: Date = new Date();
     const newTicketUpdateDate: Date = new Date();
-    if (!newTicketTitle || newTicketTitle.length === 0) {
+    const newTicketPriority: string = req.body.priority ? req.body.priority : '';
+    if (newTicketTitle.length === 0) {
         return res.status(400).json({ 'message': 'No Ticket Title Set' });
+    }
+    if (newTicketPriority.length === 0) {
+        return res.status(400).json({ 'message': 'No Ticket Priority Set' });
+    }
+
+    if (validPriorities.indexOf(newTicketPriority) === -1) {
+        return res.status(400).json({ 'message': 'Invalid Ticket Priority' });
     }
     const newTicketStatus: string = 'open';
 
@@ -72,7 +81,8 @@ ticketsController.post('/create', async (req: TicketRequest, res) => {
         description: newTicketDescription,
         createDate: newTicketCreateDate,
         updateDate: newTicketUpdateDate,
-        status: newTicketStatus
+        status: newTicketStatus,
+        priority: newTicketPriority
     };
     try {
         await tickets.push(createdTicket)
@@ -101,6 +111,7 @@ ticketsController.put('/edit/:id', async (req, res) => {
     const newAssignedTo: string = req.body.assignedTo;
     const newDescription: string = req.body.description;
     const newStatus: string = req.body.status;
+    const newPriority: string = req.body.priority;
     if(newTitle){
         if(newTitle.length === 0){
             return res.status(400).json({'message': 'Ticket Title Cannot Be Empty Title'});
@@ -122,6 +133,12 @@ ticketsController.put('/edit/:id', async (req, res) => {
             return res.status(400).json({'message' : 'Invalid Ticket Status Input'});
         }
         ticketToBeEdited.status = newStatus;
+    }
+    if(newPriority && newPriority.length !== 0){
+
+        if(await validPriorities.indexOf(newPriority) === -1){
+            return res.status(400).json({'message' : 'Invalid Ticket Priority Input'});
+        }
     }
     ticketToBeEdited.updateDate = new Date();
     tickets[searchedTicketIndex] = ticketToBeEdited;

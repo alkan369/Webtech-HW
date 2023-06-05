@@ -9,7 +9,8 @@ export const tickets: Ticket[] = [
         description: 'description1',
         createDate: new Date(),
         updateDate: new Date(),
-        status: 'open'
+        status: 'open',
+        priority: 'Low'
     },
     {
         id:'2',
@@ -19,7 +20,8 @@ export const tickets: Ticket[] = [
         description: 'description2',
         createDate: new Date(),
         updateDate: new Date(),
-        status:'open'
+        status:'open',
+        priority: 'Medium'
     },
     {
         id:'3',
@@ -29,7 +31,8 @@ export const tickets: Ticket[] = [
         description: 'description3',
         createDate: new Date(),
         updateDate: new Date(),
-        status:'open'
+        status:'open',
+        priority: 'Low'
     },
     {
         id:'4',
@@ -39,7 +42,8 @@ export const tickets: Ticket[] = [
         description: 'description4',
         createDate: new Date(),
         updateDate: new Date(),
-        status:'open'
+        status:'open',
+        priority: 'High'
     },
     {
         id:'5',
@@ -49,6 +53,7 @@ export const tickets: Ticket[] = [
         description: 'description5',
         createDate: new Date(),
         updateDate: new Date(),
-        status:'open'
+        status:'open',
+        priority: 'Low'
     }
 ]
